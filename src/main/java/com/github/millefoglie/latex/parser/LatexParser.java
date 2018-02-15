@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.millefoglie.latex.documents.BasicLatexDocument;
 import com.github.millefoglie.latex.documents.LatexDocument;
-import com.github.millefoglie.latex.nodes.AbstractParentNode;
 import com.github.millefoglie.latex.nodes.Node;
 import com.github.millefoglie.latex.nodes.RootNode;
 import com.github.millefoglie.latex.nodes.TextNode;
@@ -153,9 +152,7 @@ public class LatexParser {
             }
         }
 
-        assert (parent instanceof AbstractParentNode);
-
-        ((AbstractParentNode) parent).addChild(child);
+        parent.addChild(child);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Collapsed {}", child.getClass().getSimpleName());

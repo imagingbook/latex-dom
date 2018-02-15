@@ -3,7 +3,7 @@ package com.github.millefoglie.latex.nodes;
 /**
  * A LaTeX DOM node for display math code.
  */
-public class DisplayMathNode extends AbstractParentNode {
+public class DisplayMathNode extends AbstractNode {
 
     private String contentOpening = "\\[";
     private String contentClosing = "\\]";

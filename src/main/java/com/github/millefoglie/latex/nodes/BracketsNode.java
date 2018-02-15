@@ -4,7 +4,7 @@ package com.github.millefoglie.latex.nodes;
  * A LaTeX DOM node for code enclosed in brackets, mainly commands optional
  * arguments.
  */
-public class BracketsNode extends AbstractParentNode{
+public class BracketsNode extends AbstractNode{
 
     public BracketsNode() {}
 

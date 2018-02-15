@@ -3,7 +3,7 @@ package com.github.millefoglie.latex.nodes;
 /**
  * A LaTeX DOM node for environment blocks.
  */
-public class EnvironmentNode extends AbstractParentNode {
+public class EnvironmentNode extends AbstractNode {
 
     private static final String BEGIN_LATEX_CMD = "\\begin";
     private static final String END_LATEX_CMD = "\\end";

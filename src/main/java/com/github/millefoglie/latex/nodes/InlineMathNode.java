@@ -3,7 +3,7 @@ package com.github.millefoglie.latex.nodes;
 /**
  * A LaTeX DOM node for in-line math code.
  */
-public class InlineMathNode extends AbstractParentNode {
+public class InlineMathNode extends AbstractNode {
 
     private String contentOpening = "$";
     private String contentClosing = "$";
