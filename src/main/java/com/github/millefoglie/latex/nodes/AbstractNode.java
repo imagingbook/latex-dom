@@ -16,6 +16,7 @@ public abstract class AbstractNode implements Node {
     private static final int CHILDREN_SIZE = 0;
 
     private String content;
+    private Node parent;
     private List<Node> children = new ArrayList<>(CHILDREN_SIZE);
 
     public AbstractNode() {}
@@ -35,21 +36,30 @@ public abstract class AbstractNode implements Node {
     }
 
     @Override
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
-
     public List<Node> getChildren() {
         return children;
     }
 
+    @Override
     public void setChildren(List<Node> children) {
-        this.children = children == null
+        this.children = (children == null)
                 ? new ArrayList<>(CHILDREN_SIZE) : children;
     }
 
-    public boolean addChild(Node child) {
-        return children.add(child);
+    @Override
+    public void append(Node child) {
+        child.setParent(this);
+        children.add(child);
+    }
+
+    @Override
+    public void setParent(Node parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public Node getParent() {
+        return parent;
     }
 
     /**
@@ -72,6 +82,11 @@ public abstract class AbstractNode implements Node {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 
 }

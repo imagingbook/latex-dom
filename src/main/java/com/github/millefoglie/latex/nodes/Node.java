@@ -9,12 +9,14 @@ import java.util.List;
  */
 public interface Node {
 
-    public String stringify();
-    public String getContent();
-    public void setContent(String content);
-    public List<Node> getChildren();
-    public void setChildren(List<Node> children);
-    public boolean addChild(Node child);
-    public void accept(Visitor visitor);
+    void setContent(String content);
+    String getContent();
+    void setChildren(List<Node> children);
+    List<Node> getChildren();
+    void append(Node child);
+    void setParent(Node parent);
+    Node getParent();
+    String stringify();
+    void accept(Visitor visitor);
 
 }

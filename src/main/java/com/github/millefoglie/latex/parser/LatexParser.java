@@ -152,7 +152,7 @@ public class LatexParser {
             }
         }
 
-        parent.addChild(child);
+        parent.append(child);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Collapsed {}", child.getClass().getSimpleName());
