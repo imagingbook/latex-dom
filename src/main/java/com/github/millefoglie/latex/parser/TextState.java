@@ -1,10 +1,10 @@
 package com.github.millefoglie.latex.parser;
 
-import java.io.IOException;
-
 import com.github.millefoglie.latex.nodes.BracesNode;
 import com.github.millefoglie.latex.nodes.CommandNode;
 import com.github.millefoglie.latex.nodes.TextNode;
+
+import java.io.IOException;
 
 /**
  * A parser state for processing simple text chunks, punctuation and other kinds
@@ -50,9 +50,10 @@ class TextState implements ParserState {
             parser.flushAndCollapse();
 
             assert (parser.peek() instanceof BracesNode) :
-	    String.format("Expected BracesNode at %s, but the top node was %s.",
-	            parser.getPosition(),
-	            parser.peek().getClass().getSimpleName());
+            String.format(
+                    "Expected BracesNode at %s, but the top node was %s.",
+                    parser.getPosition(),
+                    parser.peek().getClass().getSimpleName());
 
             parser.collapse();
             parser.push(new TextNode());
@@ -79,7 +80,7 @@ class TextState implements ParserState {
         }
     }
 
-    private void processAsText(LatexParser parser, String chr) throws IOException {
+    private void processAsText(LatexParser parser, String chr) {
         if (chr.matches("[\\p{L}\\d]")) {
             parser.appendToBuffer(chr);
         } else {

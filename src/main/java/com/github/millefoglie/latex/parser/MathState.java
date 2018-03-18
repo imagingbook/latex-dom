@@ -1,10 +1,10 @@
 package com.github.millefoglie.latex.parser;
 
-import java.io.IOException;
-
 import com.github.millefoglie.latex.nodes.DisplayMathNode;
 import com.github.millefoglie.latex.nodes.InlineMathNode;
 import com.github.millefoglie.latex.nodes.TextNode;
+
+import java.io.IOException;
 
 /**
  * A parser state for processing math states which are opened and closed with
@@ -25,10 +25,10 @@ class MathState implements ParserState {
 
     @Override
     public void process(LatexParser parser, String chr) throws IOException {
-	if (!(parser.peek() instanceof InlineMathNode
-	        || parser.peek() instanceof DisplayMathNode)) {
-	    parser.flushAndCollapse();
-	}
+        if (!(parser.peek() instanceof InlineMathNode
+                || parser.peek() instanceof DisplayMathNode)) {
+            parser.flushAndCollapse();
+        }
 
         if (chr.equals("$")) {
             switch (parser.getBufferLength()) {
