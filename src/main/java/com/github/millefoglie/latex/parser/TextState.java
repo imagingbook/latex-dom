@@ -26,27 +26,27 @@ class TextState implements ParserState {
     }
 
     @Override
-    public void process(LatexParser parser, String chr) throws IOException {
+    public void process(LatexParser parser, char chr) throws IOException {
         if (!(parser.peek() instanceof TextNode)) {
             parser.flushAndCollapse();
             parser.push(new TextNode());
         }
 
         switch (chr) {
-        case "%":
+        case '%':
             parser.setState(CommentState.getInstance());
             parser.process(chr);
             break;
-        case "\\":
+        case '\\':
             parser.setState(CommandState.getInstance());
             parser.process(chr);
             break;
-        case "{":
+        case '{':
             parser.flushAndCollapse();
             parser.push(new BracesNode());
             parser.push(new TextNode());
             break;
-        case "}":
+        case '}':
             parser.flushAndCollapse();
 
             assert (parser.peek() instanceof BracesNode) :
@@ -58,12 +58,12 @@ class TextState implements ParserState {
             parser.collapse();
             parser.push(new TextNode());
             break;
-        case "$":
+        case '$':
             parser.setState(MathState.getInstance());
             parser.process(chr);
             break;
-        case "_":
-        case "^":
+        case '_':
+        case '^':
             parser.flushAndCollapse();
             parser.push(new CommandNode());
             parser.appendToBuffer(chr);
@@ -71,7 +71,7 @@ class TextState implements ParserState {
             parser.push(new TextNode());
             break;
         default:
-            if (chr.matches("\\s")) {
+            if (Character.isWhitespace(chr)) {
                 parser.setState(SeparatorState.getInstance());
                 parser.process(chr);
             } else {
@@ -80,8 +80,8 @@ class TextState implements ParserState {
         }
     }
 
-    private void processAsText(LatexParser parser, String chr) {
-        if (chr.matches("[\\p{L}\\d]")) {
+    private void processAsText(LatexParser parser, char chr) {
+        if (Character.isLetterOrDigit(chr)) {
             parser.appendToBuffer(chr);
         } else {
             parser.flushAndCollapse();

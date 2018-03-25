@@ -1,8 +1,8 @@
 package com.github.millefoglie.latex.parser;
 
-import java.io.IOException;
-
 import com.github.millefoglie.latex.nodes.CommentNode;
+
+import java.io.IOException;
 
 /**
  * A parser state for processing comments, like "% comment".
@@ -18,13 +18,13 @@ class CommentState implements ParserState {
     }
 
     @Override
-    public void process(LatexParser parser, String chr) throws IOException {
+    public void process(LatexParser parser, char chr) throws IOException {
         if (!(parser.peek() instanceof CommentNode)) {
             parser.flushAndCollapse();
             parser.push(new CommentNode());
         }
 
-        if (chr.matches("[\\r\\n]")) {
+        if ((chr == '\r') || (chr == '\n')) {
             parser.setState(SeparatorState.getInstance());
             parser.process(chr);
         } else {

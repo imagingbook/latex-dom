@@ -1,19 +1,18 @@
 package com.github.millefoglie.latex.parser;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Deque;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.millefoglie.latex.documents.BasicLatexDocument;
 import com.github.millefoglie.latex.documents.LatexDocument;
 import com.github.millefoglie.latex.nodes.Node;
 import com.github.millefoglie.latex.nodes.RootNode;
 import com.github.millefoglie.latex.nodes.TextNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * LaTeX DOM parser.
@@ -51,16 +50,16 @@ public class LatexParser {
     public LatexDocument parse(InputStream inputStream) throws LatexParserException {
         try (InputStreamReader in = new InputStreamReader(inputStream)) {
             int next;
-            String chr;
+            char chr;
 
             init();
 
             while ((next = in.read()) != -1) {
-                chr = String.valueOf((char) next);
+                chr = (char) next;
 
                 process(chr);
 
-                if (chr.matches("[\\r\\n]")) {
+                if (chr == '\r' || chr == '\n') {
                     linePos++;
                     columnPos = 1;
                 } else {
@@ -68,13 +67,11 @@ public class LatexParser {
                 }
             }
 
-            // hack to correctly finish states processing and complete the DOM
-            process("");
             flushAndCollapse();
 
             if (nodeStack.peek() != root) {
-		throw new LatexParserException(String.format("Unmatched node %s.",
-		        peek().getClass().getSimpleName()));
+                throw new LatexParserException(String.format("Unmatched node %s.",
+                        peek().getClass().getSimpleName()));
             }
         } catch (IOException e) {
             LOG.error("Could not parse.", e);
@@ -85,7 +82,7 @@ public class LatexParser {
         return document;
     }
 
-    void process(String chr) throws IOException {
+    void process(char chr) throws IOException {
         state.process(this, chr);
     }
 
@@ -101,8 +98,8 @@ public class LatexParser {
         buffer.delete(0, buffer.length());
     }
 
-    void appendToBuffer(String str) {
-        buffer.append(str);
+    void appendToBuffer(char chr) {
+        buffer.append(chr);
     }
 
     int getBufferLength() {

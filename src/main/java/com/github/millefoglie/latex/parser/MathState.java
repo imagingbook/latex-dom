@@ -24,13 +24,13 @@ class MathState implements ParserState {
     }
 
     @Override
-    public void process(LatexParser parser, String chr) throws IOException {
+    public void process(LatexParser parser, char chr) throws IOException {
         if (!(parser.peek() instanceof InlineMathNode
                 || parser.peek() instanceof DisplayMathNode)) {
             parser.flushAndCollapse();
         }
 
-        if (chr.equals("$")) {
+        if (chr == '$') {
             switch (parser.getBufferLength()) {
             case 0:
                 if (parser.peek() instanceof InlineMathNode) {

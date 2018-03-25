@@ -1,8 +1,8 @@
 package com.github.millefoglie.latex.parser;
 
-import java.io.IOException;
-
 import com.github.millefoglie.latex.nodes.SeparatorNode;
+
+import java.io.IOException;
 
 /**
  * A parser state for processing separators, such as line breaks, spaces and
@@ -19,13 +19,13 @@ class SeparatorState implements ParserState {
     }
 
     @Override
-    public void process(LatexParser parser, String chr) throws IOException {
+    public void process(LatexParser parser, char chr) throws IOException {
         if (!(parser.peek() instanceof SeparatorNode)) {
             parser.flushAndCollapse();
             parser.push(new SeparatorNode());
         }
 
-        if (chr.matches("\\s")) {
+        if (Character.isWhitespace(chr)) {
             parser.appendToBuffer(chr);
         } else {
             parser.setState(TextState.getInstance());

@@ -14,6 +14,6 @@ interface ParserState {
      * @param chr character to be processed (should be a string of length 1)
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    void process(LatexParser parser, String chr) throws IOException;
+    void process(LatexParser parser, char chr) throws IOException;
 
 }

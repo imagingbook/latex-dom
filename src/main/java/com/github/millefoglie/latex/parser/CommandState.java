@@ -1,11 +1,11 @@
 package com.github.millefoglie.latex.parser;
 
-import java.io.IOException;
-
 import com.github.millefoglie.latex.nodes.CommandNode;
 import com.github.millefoglie.latex.nodes.DisplayMathNode;
 import com.github.millefoglie.latex.nodes.InlineMathNode;
 import com.github.millefoglie.latex.nodes.TextNode;
+
+import java.io.IOException;
 
 /**
  * A parser state for processing commands, like "\cmd" and also sub-scripts _
@@ -22,22 +22,22 @@ class CommandState implements ParserState {
     }
 
     @Override
-    public void process(LatexParser parser, String chr) throws IOException {
+    public void process(LatexParser parser, char chr) throws IOException {
         if (!(parser.peek() instanceof CommandNode)) {
             parser.flushAndCollapse();
             parser.push(new CommandNode());
         }
 
         if (parser.getBufferLength() == 0) {
-            assert ("\\".equals(chr));
+            assert (chr == '\\');
             parser.appendToBuffer(chr);
-        } else if (chr.matches("[\\p{L}]")) {
+        } else if (Character.isLetter(chr)) {
             parser.appendToBuffer(chr);
         } else if (parser.getBufferLength() == 1) {
             assert ("\\".equals(parser.getBufferContent()));
 
             switch (chr) {
-            case "(":
+            case '(':
                 parser.pop();
                 parser.push(new InlineMathNode());
                 ((InlineMathNode) parser.peek()).setContentOpening("\\(");
@@ -45,7 +45,7 @@ class CommandState implements ParserState {
                 parser.setState(TextState.getInstance());
                 parser.clearBuffer();
                 break;
-            case ")":
+            case ')':
                 parser.pop();
 
                 assert (parser.peek() instanceof InlineMathNode) :
@@ -56,7 +56,7 @@ class CommandState implements ParserState {
                 ((InlineMathNode) parser.peek()).setContentClosing("\\)");
                 parser.setState(TextState.getInstance());
                 break;
-            case "[":
+            case '[':
                 parser.pop();
                 parser.push(new DisplayMathNode());
                 ((DisplayMathNode) parser.peek()).setContentOpening("\\[");
@@ -64,7 +64,7 @@ class CommandState implements ParserState {
                 parser.setState(TextState.getInstance());
                 parser.clearBuffer();
                 break;
-            case "]":
+            case ']':
                 parser.pop();
 
                 assert (parser.peek() instanceof DisplayMathNode) :
