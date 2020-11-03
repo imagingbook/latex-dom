@@ -1,6 +1,6 @@
 # LaTeX DOM Parser
 
-An alpha version of a LaTeX DOM Parser that converts a LaTeX document to a tree of nodes the represent various elements, such as text, spaces, commands, etc. The tree always starts with a `RootNode`.
+An experimental version of a LaTeX DOM Parser that converts a LaTeX document to a tree of nodes the represent various elements, such as text, spaces, commands, etc. The tree always starts with a `RootNode`.
 
 The current API is subject to future changes.
 
