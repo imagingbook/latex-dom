@@ -131,7 +131,8 @@ public class LatexLexer {
         String value = (type == LatexTokenType.TEXT) || (type == LatexTokenType.WHITESPACE)
                 ? stringBuilder.toString() : null;
 
-        LatexToken token = new LatexToken(type, value);
+        LatexToken token = value == null
+                ? LatexToken.ofType(type) : new LatexToken(type, value);
         previousTokenType = token.getType();
         return token;
     }

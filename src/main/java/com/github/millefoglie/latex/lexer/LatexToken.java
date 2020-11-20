@@ -1,26 +1,32 @@
 package com.github.millefoglie.latex.lexer;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class LatexToken {
-    static final LatexToken BACKSLASH = new LatexToken(LatexTokenType.BACKSLASH);
-    static final LatexToken OPENING_BRACE = new LatexToken(LatexTokenType.OPENING_BRACE);
-    static final LatexToken CLOSING_BRACE = new LatexToken(LatexTokenType.CLOSING_BRACE);
-    static final LatexToken OPENING_BRACKET = new LatexToken(LatexTokenType.OPENING_BRACKET);
-    static final LatexToken CLOSING_BRACKET = new LatexToken(LatexTokenType.CLOSING_BRACKET);
-    static final LatexToken OPENING_PARENTHESIS = new LatexToken(LatexTokenType.OPENING_PARENTHESIS);
-    static final LatexToken CLOSING_PARENTHESIS = new LatexToken(LatexTokenType.CLOSING_PARENTHESIS);
-    static final LatexToken DOLLAR = new LatexToken(LatexTokenType.DOLLAR);
-    static final LatexToken CARET = new LatexToken(LatexTokenType.CARET);
-    static final LatexToken UNDERSCORE = new LatexToken(LatexTokenType.UNDERSCORE);
-    static final LatexToken PERCENT = new LatexToken(LatexTokenType.PERCENT);
-    static final LatexToken AMPERSAND = new LatexToken(LatexTokenType.AMPERSAND);
-    static final LatexToken AT = new LatexToken(LatexTokenType.AT);
+    private static final Map<LatexTokenType, LatexToken> TOKEN_POOL = new EnumMap<>(LatexTokenType.class);
+
+    static {
+        TOKEN_POOL.put(LatexTokenType.BACKSLASH , new LatexToken(LatexTokenType.BACKSLASH));
+        TOKEN_POOL.put(LatexTokenType.OPENING_BRACE , new LatexToken(LatexTokenType.OPENING_BRACE));
+        TOKEN_POOL.put(LatexTokenType.CLOSING_BRACE , new LatexToken(LatexTokenType.CLOSING_BRACE));
+        TOKEN_POOL.put(LatexTokenType.OPENING_BRACKET , new LatexToken(LatexTokenType.OPENING_BRACKET));
+        TOKEN_POOL.put(LatexTokenType.CLOSING_BRACKET , new LatexToken(LatexTokenType.CLOSING_BRACKET));
+        TOKEN_POOL.put(LatexTokenType.OPENING_PARENTHESIS , new LatexToken(LatexTokenType.OPENING_PARENTHESIS));
+        TOKEN_POOL.put(LatexTokenType.CLOSING_PARENTHESIS , new LatexToken(LatexTokenType.CLOSING_PARENTHESIS));
+        TOKEN_POOL.put(LatexTokenType.DOLLAR , new LatexToken(LatexTokenType.DOLLAR));
+        TOKEN_POOL.put(LatexTokenType.CARET , new LatexToken(LatexTokenType.CARET));
+        TOKEN_POOL.put(LatexTokenType.UNDERSCORE , new LatexToken(LatexTokenType.UNDERSCORE));
+        TOKEN_POOL.put(LatexTokenType.PERCENT , new LatexToken(LatexTokenType.PERCENT));
+        TOKEN_POOL.put(LatexTokenType.AMPERSAND , new LatexToken(LatexTokenType.AMPERSAND));
+        TOKEN_POOL.put(LatexTokenType.AT , new LatexToken(LatexTokenType.AT));
+    }
 
     private final LatexTokenType type;
     private final String value;
 
-    public LatexToken(LatexTokenType type) {
+    private LatexToken(LatexTokenType type) {
         Objects.requireNonNull(type);
 
         this.type = type;
@@ -32,6 +38,10 @@ public class LatexToken {
         
         this.type = type;
         this.value = value;
+    }
+
+    public static LatexToken ofType(LatexTokenType type) {
+        return TOKEN_POOL.computeIfAbsent(type, t -> new LatexToken(type));
     }
 
     public LatexTokenType getType() {
