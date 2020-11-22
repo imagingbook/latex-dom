@@ -64,7 +64,8 @@ class LatexLexerSpec extends Specification {
         '----test' | '---'
         '---test'  | '---'
         '--test'   | '--'
-        ' \t\n'    | ' \t\n'
+        ' \t\n'    | ' \t'
+        '\n\n\t'   | '\n'
     }
 
     def "Tokenization of '#str' yields correct tokens"() {
@@ -87,22 +88,23 @@ class LatexLexerSpec extends Specification {
         str         | expectedTokens
         '123test'   | [new LatexToken(LatexTokenType.TEXT, '123'), new LatexToken(LatexTokenType.TEXT, 'test')]
         '123 test'  | [new LatexToken(LatexTokenType.TEXT, '123'), new LatexToken(LatexTokenType.WHITESPACE, ' '), new LatexToken(LatexTokenType.TEXT, 'test')]
-        'test{'     | [new LatexToken(LatexTokenType.TEXT, 'test'), new LatexToken(LatexTokenType.OPENING_BRACE)]
-        'test}'     | [new LatexToken(LatexTokenType.TEXT, 'test'), new LatexToken(LatexTokenType.CLOSING_BRACE)]
-        'test['     | [new LatexToken(LatexTokenType.TEXT, 'test'), new LatexToken(LatexTokenType.OPENING_BRACKET)]
-        'test]'     | [new LatexToken(LatexTokenType.TEXT, 'test'), new LatexToken(LatexTokenType.CLOSING_BRACKET)]
-        '\\('       | [new LatexToken(LatexTokenType.BACKSLASH), new LatexToken(LatexTokenType.OPENING_PARENTHESIS)]
-        ' )'        | [new LatexToken(LatexTokenType.WHITESPACE, ' '), new LatexToken(LatexTokenType.CLOSING_PARENTHESIS)]
-        '$$'        | [new LatexToken(LatexTokenType.DOLLAR), new LatexToken(LatexTokenType.DOLLAR)]
-        '$x$'       | [new LatexToken(LatexTokenType.DOLLAR), new LatexToken(LatexTokenType.TEXT, 'x'), new LatexToken(LatexTokenType.DOLLAR)]
-        'x^'        | [new LatexToken(LatexTokenType.TEXT, 'x'), new LatexToken(LatexTokenType.CARET)]
-        'x_'        | [new LatexToken(LatexTokenType.TEXT, 'x'), new LatexToken(LatexTokenType.UNDERSCORE)]
-        '% comment' | [new LatexToken(LatexTokenType.PERCENT), new LatexToken(LatexTokenType.WHITESPACE, ' '), new LatexToken(LatexTokenType.TEXT, 'comment')]
-        '& y'       | [new LatexToken(LatexTokenType.AMPERSAND), new LatexToken(LatexTokenType.WHITESPACE, ' '), new LatexToken(LatexTokenType.TEXT, 'y')]
-        '@space'    | [new LatexToken(LatexTokenType.AT), new LatexToken(LatexTokenType.TEXT, 'space')]
-        '\\test'    | [new LatexToken(LatexTokenType.BACKSLASH), new LatexToken(LatexTokenType.TEXT, 'test')]
-        '\\123'     | [new LatexToken(LatexTokenType.BACKSLASH), new LatexToken(LatexTokenType.TEXT, '1'), new LatexToken(LatexTokenType.TEXT, '23')]
-        '\\---'     | [new LatexToken(LatexTokenType.BACKSLASH), new LatexToken(LatexTokenType.TEXT, '-'), new LatexToken(LatexTokenType.TEXT, '--')]
-        '\\<<'      | [new LatexToken(LatexTokenType.BACKSLASH), new LatexToken(LatexTokenType.TEXT, '<'), new LatexToken(LatexTokenType.TEXT, '<')]
+        'test{'     | [new LatexToken(LatexTokenType.TEXT, 'test'), LatexToken.ofType(LatexTokenType.OPENING_BRACE)]
+        'test}'     | [new LatexToken(LatexTokenType.TEXT, 'test'), LatexToken.ofType(LatexTokenType.CLOSING_BRACE)]
+        'test['     | [new LatexToken(LatexTokenType.TEXT, 'test'), LatexToken.ofType(LatexTokenType.OPENING_BRACKET)]
+        'test]'     | [new LatexToken(LatexTokenType.TEXT, 'test'), LatexToken.ofType(LatexTokenType.CLOSING_BRACKET)]
+        '\\('       | [LatexToken.ofType(LatexTokenType.BACKSLASH), LatexToken.ofType(LatexTokenType.OPENING_PARENTHESIS)]
+        ' )'        | [new LatexToken(LatexTokenType.WHITESPACE, ' '), LatexToken.ofType(LatexTokenType.CLOSING_PARENTHESIS)]
+        '$$'        | [LatexToken.ofType(LatexTokenType.DOLLAR), LatexToken.ofType(LatexTokenType.DOLLAR)]
+        '$x$'       | [LatexToken.ofType(LatexTokenType.DOLLAR), new LatexToken(LatexTokenType.TEXT, 'x'), LatexToken.ofType(LatexTokenType.DOLLAR)]
+        'x^'        | [new LatexToken(LatexTokenType.TEXT, 'x'), LatexToken.ofType(LatexTokenType.CARET)]
+        'x_'        | [new LatexToken(LatexTokenType.TEXT, 'x'), LatexToken.ofType(LatexTokenType.UNDERSCORE)]
+        '% comment' | [LatexToken.ofType(LatexTokenType.PERCENT), new LatexToken(LatexTokenType.WHITESPACE, ' '), new LatexToken(LatexTokenType.TEXT, 'comment')]
+        '& y'       | [LatexToken.ofType(LatexTokenType.AMPERSAND), new LatexToken(LatexTokenType.WHITESPACE, ' '), new LatexToken(LatexTokenType.TEXT, 'y')]
+        '@space'    | [LatexToken.ofType(LatexTokenType.AT), new LatexToken(LatexTokenType.TEXT, 'space')]
+        '\\test'    | [LatexToken.ofType(LatexTokenType.BACKSLASH), new LatexToken(LatexTokenType.TEXT, 'test')]
+        '\\123'     | [LatexToken.ofType(LatexTokenType.BACKSLASH), new LatexToken(LatexTokenType.TEXT, '1'), new LatexToken(LatexTokenType.TEXT, '23')]
+        '\\---'     | [LatexToken.ofType(LatexTokenType.BACKSLASH), new LatexToken(LatexTokenType.TEXT, '-'), new LatexToken(LatexTokenType.TEXT, '--')]
+        '\\<<'      | [LatexToken.ofType(LatexTokenType.BACKSLASH), new LatexToken(LatexTokenType.TEXT, '<'), new LatexToken(LatexTokenType.TEXT, '<')]
+        ' \n\n'     | [new LatexToken(LatexTokenType.WHITESPACE, ' '), new LatexToken(LatexTokenType.WHITESPACE, '\n'), new LatexToken(LatexTokenType.WHITESPACE, '\n')]
     }
 }
