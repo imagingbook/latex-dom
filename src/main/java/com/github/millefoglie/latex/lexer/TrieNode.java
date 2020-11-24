@@ -33,7 +33,7 @@ class TrieNode {
         TrieNode node = this;
         int pos = 0;
 
-        while ((node != null) && (!node.leafNode) && (pos < charSequence.length())) {
+        while ((node != null) && (pos < charSequence.length())) {
             int c = charSequence.charAt(pos++);
             node = node.children.get(c);
         }

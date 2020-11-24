@@ -30,7 +30,7 @@ public class LatexToken {
         Objects.requireNonNull(type);
 
         this.type = type;
-        value = null;
+        value = type.getDefaultValue();
     }
 
     public LatexToken(LatexTokenType type, String value) {

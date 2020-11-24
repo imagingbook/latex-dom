@@ -21,6 +21,7 @@ class TrieNodeSpec extends Specification {
             containsPrefix("Thi")
             containsPrefix("Tha")
             !containsPrefix("The")
+            !containsPrefix("Thats")
             !contains("Those")
         }
     }
