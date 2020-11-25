@@ -48,5 +48,18 @@ class ParsingContext {
 
     public void emitNode(LatexNode node) {
         scopeStack.emitNode(node);
+        updateScopeFrameFlags(node);
+    }
+
+    private void updateScopeFrameFlags(LatexNode node) {
+        switch (node.getType()) {
+        case COMMAND -> {
+            scopeStack.getCurrentScopeFrame().setBracketsNodeAllowed(true);
+        }
+        case BRACES, BRACKETS, WHITESPACE -> {}
+        default -> {
+            scopeStack.getCurrentScopeFrame().setBracketsNodeAllowed(false);
+        }
+        }
     }
 }

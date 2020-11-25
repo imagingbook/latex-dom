@@ -46,6 +46,7 @@ public class DefaultLatexParser implements LatexParser {
 
     private void parseTokens(ParsingContext context) throws IOException, LatexParserException {
         LatexToken token = context.getNextToken();
+        ScopeStack scopeStack = context.getScopeStack();
 
         while (token != null) {
             switch (token.getType()) {
@@ -59,22 +60,30 @@ public class DefaultLatexParser implements LatexParser {
             }
             case OPENING_BRACE -> {
                 flushText(context);
-                context.getScopeStack().openScope(new CompoundLatexNode(LatexNodeType.BRACES));
+                scopeStack.openScope(new CompoundLatexNode(LatexNodeType.BRACES));
             }
             case CLOSING_BRACE -> {
                 flushText(context);
-                context.getScopeStack().closeScope(LatexNodeType.BRACES);
+                scopeStack.closeScope(LatexNodeType.BRACES);
             }
-//            case OPENING_BRACKET -> {
-//                // TODO open only after immediate command or args
-//                flushText();
-//                context.getScopeStack().openScope(new CompoundLatexNode(LatexNodeType.BRACKETS));
-//            }
-//            case CLOSING_BRACKET -> {
-//                // TODO check if brackets node scope opened
-//                flushText();
-//                context.getScopeStack().closeScope(LatexNodeType.BRACKETS);
-//            }
+            case OPENING_BRACKET -> {
+                flushText(context);
+
+                if (scopeStack.getCurrentScopeFrame().isBracketsNodeAllowed()) {
+                    scopeStack.openScope(new CompoundLatexNode(LatexNodeType.BRACKETS));
+                } else {
+                    appendText(context, token.getValue());
+                }
+            }
+            case CLOSING_BRACKET -> {
+                flushText(context);
+
+                if (context.getScopeStack().getCurrentScopeFrame().getNode().getType() == LatexNodeType.BRACKETS) {
+                    context.getScopeStack().closeScope(LatexNodeType.BRACKETS);
+                } else {
+                    appendText(context, token.getValue());
+                }
+            }
             case DOLLAR -> {
                 flushText(context);
                 parseDollar(context);
@@ -178,7 +187,7 @@ public class DefaultLatexParser implements LatexParser {
     }
 
     private void parseDollar(ParsingContext context) throws IOException, LatexParserException {
-        CompoundLatexNode scopeNode = context.getScopeStack().getCurrentScopeNode();
+        CompoundLatexNode scopeNode = context.getScopeStack().getCurrentScopeFrame().getNode();
         LatexToken nextToken = context.getNextToken();
 
         if (nextToken.getType() == LatexTokenType.DOLLAR) {

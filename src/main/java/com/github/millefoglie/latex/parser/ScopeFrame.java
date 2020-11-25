@@ -9,6 +9,7 @@ import java.util.List;
 class ScopeFrame {
     private CompoundLatexNode node;
     private final List<LatexNode> children = new LinkedList<>();
+    private boolean bracketsNodeAllowed;
 
     public ScopeFrame(CompoundLatexNode node) {
         this.node = node;
@@ -24,5 +25,13 @@ class ScopeFrame {
 
     public List<LatexNode> getChildren() {
         return children;
+    }
+
+    public boolean isBracketsNodeAllowed() {
+        return bracketsNodeAllowed;
+    }
+
+    public void setBracketsNodeAllowed(boolean bracketsNodeAllowed) {
+        this.bracketsNodeAllowed = bracketsNodeAllowed;
     }
 }

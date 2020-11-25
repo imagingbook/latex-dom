@@ -60,6 +60,10 @@ class ScopeStack {
         }
     }
 
+    ScopeFrame getCurrentScopeFrame() {
+        return scopeStack.peek();
+    }
+
     private void appendAll(LatexNode scopeNode, Collection<LatexNode> children) {
         for (LatexNode child : children) {
             scopeNode.append(child);
@@ -72,13 +76,5 @@ class ScopeStack {
         }
 
         scopeStack.peek().getChildren().add(node);
-    }
-
-    CompoundLatexNode getCurrentScopeNode() {
-        if (scopeStack.isEmpty()) {
-            return null;
-        }
-
-        return scopeStack.peek().getNode();
     }
 }
