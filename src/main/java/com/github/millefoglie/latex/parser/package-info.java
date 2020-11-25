@@ -1,4 +1,4 @@
 /**
- * LaTeX DOM parser implementation, its states and related classes.
+ * LaTeX DOM parser implementation and related classes
  */
 package com.github.millefoglie.latex.parser;
