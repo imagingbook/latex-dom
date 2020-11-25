@@ -173,7 +173,7 @@ public class DefaultLatexParser implements LatexParser {
     private void parseComment(ParsingContext context) throws IOException {
         LatexToken token = context.getNextToken();
 
-        while ((token != null) && (!"\n".equals(token.getValue()))) {
+        while ((token != null) && (token.getValue().indexOf('\n') < 0)) {
             context.appendContent(token.getValue());
             token = context.getNextToken();
         }

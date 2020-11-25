@@ -65,7 +65,7 @@ class LatexLexerSpec extends Specification {
         '---test'  | '---'
         '--test'   | '--'
         ' \t\n'    | ' \t'
-        '\n\n\t'   | '\n'
+        '\n\n\t'   | '\n\n'
     }
 
     def "Tokenization of '#str' yields correct tokens"() {
@@ -105,6 +105,6 @@ class LatexLexerSpec extends Specification {
         '\\123'     | [LatexToken.ofType(LatexTokenType.BACKSLASH), new LatexToken(LatexTokenType.TEXT, '1'), new LatexToken(LatexTokenType.TEXT, '23')]
         '\\---'     | [LatexToken.ofType(LatexTokenType.BACKSLASH), new LatexToken(LatexTokenType.TEXT, '-'), new LatexToken(LatexTokenType.TEXT, '--')]
         '\\<<'      | [LatexToken.ofType(LatexTokenType.BACKSLASH), new LatexToken(LatexTokenType.TEXT, '<'), new LatexToken(LatexTokenType.TEXT, '<')]
-        ' \n\n'     | [new LatexToken(LatexTokenType.WHITESPACE, ' '), new LatexToken(LatexTokenType.WHITESPACE, '\n'), new LatexToken(LatexTokenType.WHITESPACE, '\n')]
+        ' \n\n'     | [new LatexToken(LatexTokenType.WHITESPACE, ' '), new LatexToken(LatexTokenType.WHITESPACE, '\n\n')]
     }
 }

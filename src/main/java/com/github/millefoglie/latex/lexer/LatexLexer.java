@@ -39,7 +39,11 @@ public class LatexLexer {
                 return emitToken(LatexTokenType.WHITESPACE);
             }
 
-            readWhile(ch -> Character.isWhitespace(ch) && (ch != '\n'));
+            if (c == '\n') {
+                readWhile(ch -> ch == '\n');
+            } else {
+                readWhile(ch -> Character.isWhitespace(ch) && (ch != '\n'));
+            }
             return emitToken(LatexTokenType.WHITESPACE);
         }
 
