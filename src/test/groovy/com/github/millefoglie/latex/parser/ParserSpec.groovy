@@ -18,7 +18,7 @@ class ParserSpec extends Specification {
 
         then:
         root != null
-        !root.getChildren().isEmpty()
+        root.getFirstChild() != root.getLastChild()
     }
 
     // TODO replace stringify with visitor

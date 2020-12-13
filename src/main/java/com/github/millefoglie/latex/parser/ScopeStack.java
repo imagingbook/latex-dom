@@ -1,5 +1,6 @@
 package com.github.millefoglie.latex.parser;
 
+import com.github.millefoglie.latex.node.AbstractLatexNode;
 import com.github.millefoglie.latex.node.CompoundLatexNode;
 import com.github.millefoglie.latex.node.LatexNode;
 import com.github.millefoglie.latex.node.LatexNodeType;
@@ -64,13 +65,13 @@ class ScopeStack {
         return scopeStack.peek();
     }
 
-    private void appendAll(LatexNode scopeNode, Collection<LatexNode> children) {
-        for (LatexNode child : children) {
-            scopeNode.append(child);
+    private void appendAll(LatexNode scopeNode, Collection<AbstractLatexNode> children) {
+        for (AbstractLatexNode child : children) {
+            scopeNode.appendChild(child);
         }
     }
 
-    void emitNode(LatexNode node) {
+    void emitNode(AbstractLatexNode node) {
         if (scopeStack.isEmpty()) {
             throw new RuntimeException("Cannot emit node");
         }

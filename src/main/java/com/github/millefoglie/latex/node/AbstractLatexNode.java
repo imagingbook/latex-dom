@@ -2,8 +2,6 @@ package com.github.millefoglie.latex.node;
 
 import com.github.millefoglie.latex.visitor.LatexNodeVisitor;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -12,9 +10,11 @@ import java.util.Objects;
  * Represents some textual content, which can have different semantic meaning
  * depending on the node sub-type.
  */
-public abstract class AbstractLatexNode implements LatexNode {
+public abstract class AbstractLatexNode implements LatexNode, LatexChildNode {
     private LatexNode parent;
     private final LatexNodeType type;
+    private LatexChildNode previousSibling;
+    private LatexChildNode nextSibling;
 
     public AbstractLatexNode(LatexNodeType type) {
         Objects.requireNonNull(type);
@@ -30,6 +30,26 @@ public abstract class AbstractLatexNode implements LatexNode {
     }
 
     @Override
+    public void setNextSibling(LatexChildNode nextSibling) {
+        this.nextSibling = nextSibling;
+    }
+
+    @Override
+    public void setPreviousSibling(LatexChildNode previousSibling) {
+        this.previousSibling = previousSibling;
+    }
+
+    @Override
+    public LatexNode getNextSibling() {
+        return nextSibling;
+    }
+
+    @Override
+    public LatexNode getPreviousSibling() {
+        return previousSibling;
+    }
+
+    @Override
     public void setContent(String content) {}
 
     @Override
@@ -38,11 +58,23 @@ public abstract class AbstractLatexNode implements LatexNode {
     }
 
     @Override
-    public void append(LatexNode child) {}
+    public LatexNode insertBefore(LatexChildNode newChild, LatexChildNode refChild) {
+        return null;
+    }
 
     @Override
-    public List<LatexNode> getChildren() {
-        return Collections.emptyList();
+    public LatexNode appendChild(LatexChildNode child) {
+        return null;
+    }
+
+    @Override
+    public LatexNode getFirstChild() {
+        return null;
+    }
+
+    @Override
+    public LatexNode getLastChild() {
+        return null;
     }
 
     @Override

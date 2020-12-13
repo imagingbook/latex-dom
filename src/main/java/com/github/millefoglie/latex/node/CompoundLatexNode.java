@@ -1,6 +1,7 @@
 package com.github.millefoglie.latex.node;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CompoundLatexNode extends AbstractLatexNode {
@@ -9,7 +10,8 @@ public class CompoundLatexNode extends AbstractLatexNode {
             LatexNodeType.CUSTOM
     );
 
-    private final List<LatexNode> children = new ArrayList<>(0);
+    private LatexChildNode firstChild;
+    private LatexChildNode lastChild;
 
     public CompoundLatexNode(LatexNodeType type) {
         super(type);
@@ -25,13 +27,85 @@ public class CompoundLatexNode extends AbstractLatexNode {
     }
 
     @Override
-    public void append(LatexNode child) {
-        children.add(child);
-        child.setParent(this);
+    public LatexNode insertBefore(LatexChildNode newChild, LatexChildNode refChild) {
+        checkChildPresent(refChild);
+
+        if (newChild == refChild) {
+            throw new LatexDomException("Cannot insert an already present node");
+        }
+
+        if (firstChild == null) {
+            firstChild = newChild;
+        }
+
+        if (lastChild == null) {
+            lastChild = newChild;
+        }
+
+        if (refChild == null) {
+            if (lastChild == newChild) {
+                return newChild;
+            } else {
+                lastChild.setNextSibling(newChild);
+                newChild.setPreviousSibling(lastChild);
+                newChild.setParent(this);
+                lastChild = newChild;
+                return newChild;
+            }
+        } else {
+            LatexChildNode prev = (LatexChildNode) refChild.getPreviousSibling();
+            prev.setNextSibling(newChild);
+            newChild.setPreviousSibling(prev);
+            newChild.setNextSibling(refChild);
+            refChild.setPreviousSibling(newChild);
+            newChild.setParent(this);
+            return newChild;
+        }
+    }
+
+    private void checkChildPresent(LatexChildNode child) {
+        if (child == null) {
+            return;
+        }
+
+        for (LatexNode node = firstChild; node != null; node = node.getNextSibling()) {
+            if (child == node) {
+                return;
+            }
+        }
+
+        String msg = String.format("Node %s is not a child node of %s", child, this);
+        throw new LatexDomException(msg);
     }
 
     @Override
+    public LatexNode appendChild(LatexChildNode child) {
+        return insertBefore(child, null);
+    }
+
+    @Override
+    public LatexNode getFirstChild() {
+        return firstChild;
+    }
+
+    @Override
+    public LatexNode getLastChild() {
+        return lastChild;
+    }
+
     public List<LatexNode> getChildren() {
+        if (firstChild == null) {
+            return Collections.emptyList();
+        }
+
+        LatexNode child = firstChild;
+        List<LatexNode> children = new ArrayList<>();
+
+        do {
+            children.add(child);
+            child = child.getNextSibling();
+        } while (child != null);
+
         return children;
     }
 }

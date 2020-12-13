@@ -2,6 +2,7 @@ package com.github.millefoglie.latex.parser;
 
 import com.github.millefoglie.latex.lexer.LatexLexer;
 import com.github.millefoglie.latex.lexer.LatexToken;
+import com.github.millefoglie.latex.node.AbstractLatexNode;
 import com.github.millefoglie.latex.node.LatexNode;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ class ParsingContext {
         contentBuilder.delete(0, contentBuilder.length());
     }
 
-    public void emitNode(LatexNode node) {
+    public void emitNode(AbstractLatexNode node) {
         scopeStack.emitNode(node);
         updateScopeFrameFlags(node);
     }

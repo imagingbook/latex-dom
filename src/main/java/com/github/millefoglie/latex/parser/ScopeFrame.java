@@ -1,14 +1,14 @@
 package com.github.millefoglie.latex.parser;
 
+import com.github.millefoglie.latex.node.AbstractLatexNode;
 import com.github.millefoglie.latex.node.CompoundLatexNode;
-import com.github.millefoglie.latex.node.LatexNode;
 
 import java.util.LinkedList;
 import java.util.List;
 
 class ScopeFrame {
     private CompoundLatexNode node;
-    private final List<LatexNode> children = new LinkedList<>();
+    private final List<AbstractLatexNode> children = new LinkedList<>();
     private boolean bracketsNodeAllowed;
 
     public ScopeFrame(CompoundLatexNode node) {
@@ -23,7 +23,7 @@ class ScopeFrame {
         this.node = node;
     }
 
-    public List<LatexNode> getChildren() {
+    public List<AbstractLatexNode> getChildren() {
         return children;
     }
 
