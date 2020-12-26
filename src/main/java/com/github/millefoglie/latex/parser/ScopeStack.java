@@ -6,7 +6,6 @@ import com.github.millefoglie.latex.node.LatexNode;
 import com.github.millefoglie.latex.node.LatexNodeType;
 import com.github.millefoglie.latex.node.SimpleLatexNode;
 
-import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -34,14 +33,12 @@ class ScopeStack {
 
         if (nodeType == scopeNode.getType()) {
             if (scopeStack.isEmpty()) {
-                appendAll(scopeNode, currentScope.getChildren());
                 return;
             }
 
             ScopeFrame enclosingScope = scopeStack.peek();
 
-            appendAll(scopeNode, currentScope.getChildren());
-            enclosingScope.getChildren().add(scopeNode);
+            enclosingScope.getNode().appendChild(scopeNode);
         } else {
             if (scopeStack.isEmpty()) {
                 throw new RuntimeException("No open scopes present");
@@ -55,8 +52,10 @@ class ScopeStack {
                 throw new RuntimeException("Cannot close scope");
             }
 
-            enclosing.getChildren().add(new SimpleLatexNode(LatexNodeType.TEXT, "["));
-            enclosing.getChildren().addAll(currentScope.getChildren());
+            CompoundLatexNode enclosingNode = enclosing.getNode();
+
+            enclosingNode.appendChild(new SimpleLatexNode(LatexNodeType.TEXT, "["));
+            scopeNode.getChildren().forEach(enclosingNode::appendChild);
             closeScope(nodeType);
         }
     }
@@ -65,17 +64,11 @@ class ScopeStack {
         return scopeStack.peek();
     }
 
-    private void appendAll(LatexNode scopeNode, Collection<AbstractLatexNode> children) {
-        for (AbstractLatexNode child : children) {
-            scopeNode.appendChild(child);
-        }
-    }
-
     void emitNode(AbstractLatexNode node) {
         if (scopeStack.isEmpty()) {
             throw new RuntimeException("Cannot emit node");
         }
 
-        scopeStack.peek().getChildren().add(node);
+        scopeStack.peek().getNode().appendChild(node);
     }
 }

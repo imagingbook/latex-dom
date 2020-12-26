@@ -40,12 +40,12 @@ public abstract class AbstractLatexNode implements LatexNode, LatexChildNode {
     }
 
     @Override
-    public LatexNode getNextSibling() {
+    public LatexChildNode getNextSibling() {
         return nextSibling;
     }
 
     @Override
-    public LatexNode getPreviousSibling() {
+    public LatexChildNode getPreviousSibling() {
         return previousSibling;
     }
 
@@ -68,12 +68,12 @@ public abstract class AbstractLatexNode implements LatexNode, LatexChildNode {
     }
 
     @Override
-    public LatexNode getFirstChild() {
+    public LatexChildNode getFirstChild() {
         return null;
     }
 
     @Override
-    public LatexNode getLastChild() {
+    public LatexChildNode getLastChild() {
         return null;
     }
 

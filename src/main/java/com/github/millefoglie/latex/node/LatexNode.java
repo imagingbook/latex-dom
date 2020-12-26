@@ -11,10 +11,10 @@ public interface LatexNode {
     String getContent();
     LatexNode insertBefore(LatexChildNode newChild, LatexChildNode refChild);
     LatexNode appendChild(LatexChildNode child);
-    LatexNode getFirstChild();
-    LatexNode getLastChild();
+    LatexChildNode getFirstChild();
+    LatexChildNode getLastChild();
     LatexNode getParent();
-    LatexNode getNextSibling();
-    LatexNode getPreviousSibling();
+    LatexChildNode getNextSibling();
+    LatexChildNode getPreviousSibling();
     void accept(LatexNodeVisitor visitor);
 }

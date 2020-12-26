@@ -84,22 +84,22 @@ public class CompoundLatexNode extends AbstractLatexNode {
     }
 
     @Override
-    public LatexNode getFirstChild() {
+    public LatexChildNode getFirstChild() {
         return firstChild;
     }
 
     @Override
-    public LatexNode getLastChild() {
+    public LatexChildNode getLastChild() {
         return lastChild;
     }
 
-    public List<LatexNode> getChildren() {
+    public List<LatexChildNode> getChildren() {
         if (firstChild == null) {
             return Collections.emptyList();
         }
 
-        LatexNode child = firstChild;
-        List<LatexNode> children = new ArrayList<>();
+        LatexChildNode child = firstChild;
+        List<LatexChildNode> children = new ArrayList<>();
 
         do {
             children.add(child);
