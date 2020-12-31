@@ -9,20 +9,15 @@ import com.github.millefoglie.latex.node.CompoundLatexNode;
 import com.github.millefoglie.latex.node.LatexNodeType;
 import com.github.millefoglie.latex.node.MathLatexNode;
 import com.github.millefoglie.latex.node.SimpleLatexNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.invoke.MethodHandles;
 
 /**
  * LaTeX DOM parser.
  */
 public class DefaultLatexParser implements LatexParser {
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     public DefaultLatexParser() {}
 
     @Override
