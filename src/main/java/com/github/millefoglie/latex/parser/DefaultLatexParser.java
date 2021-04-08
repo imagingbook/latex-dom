@@ -6,6 +6,7 @@ import com.github.millefoglie.latex.lexer.LatexLexer;
 import com.github.millefoglie.latex.lexer.LatexToken;
 import com.github.millefoglie.latex.lexer.LatexTokenType;
 import com.github.millefoglie.latex.node.CompoundLatexNode;
+import com.github.millefoglie.latex.node.EnvironmentLatexNode;
 import com.github.millefoglie.latex.node.LatexNodeType;
 import com.github.millefoglie.latex.node.MathLatexNode;
 import com.github.millefoglie.latex.node.SimpleLatexNode;
@@ -104,9 +105,7 @@ public class DefaultLatexParser implements LatexParser {
 //                flushText();
 //                context.emitNode(new SimpleLatexNode(LatexNodeType.AT, token.getValue()));
 //            }
-            default -> {
-                appendText(context, token.getValue());
-            }
+            default -> appendText(context, token.getValue());
             }
 
             token = context.getNextToken();
@@ -159,12 +158,26 @@ public class DefaultLatexParser implements LatexParser {
             context.getScopeStack().closeScope(LatexNodeType.INLINE_MATH);
         }
         default -> {
-            context.emitNode(new SimpleLatexNode(LatexNodeType.COMMAND, token.getValue()));
+            switch (token.getValue()) {
+            case "begin":
+                EnvironmentLatexNode envNode = new EnvironmentLatexNode(LatexNodeType.ENVIRONMENT);
+                context.getScopeStack().openScope(envNode);
+                context.getScopeStack()
+                       .getCurrentScopeFrame()
+                       .setEmitter(new EnvironmentNodeEmitter(envNode));
+                break;
+            case "end":
+                context.getScopeStack().ensureScope(LatexNodeType.ENVIRONMENT);
+            default:
+                context.emitNode(new SimpleLatexNode(LatexNodeType.COMMAND, token.getValue()));
+            }
+
             context.clearContent();
         }
         }
     }
 
+    // TODO check if line endings are processed correctly
     private void parseComment(ParsingContext context) throws IOException {
         LatexToken token = context.getNextToken();
 

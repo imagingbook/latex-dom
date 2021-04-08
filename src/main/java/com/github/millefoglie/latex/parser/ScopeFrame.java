@@ -5,6 +5,7 @@ import com.github.millefoglie.latex.node.CompoundLatexNode;
 class ScopeFrame {
     private CompoundLatexNode node;
     private boolean bracketsNodeAllowed;
+    private Emitter emitter = DefaultEmitter.INSTANCE;
 
     public ScopeFrame(CompoundLatexNode node) {
         this.node = node;
@@ -24,5 +25,13 @@ class ScopeFrame {
 
     public void setBracketsNodeAllowed(boolean bracketsNodeAllowed) {
         this.bracketsNodeAllowed = bracketsNodeAllowed;
+    }
+
+    public Emitter getEmitter() {
+        return emitter;
+    }
+
+    public void setEmitter(Emitter emitter) {
+        this.emitter = emitter;
     }
 }

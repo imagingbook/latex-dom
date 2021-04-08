@@ -2,6 +2,7 @@ package com.github.millefoglie.latex.parser;
 
 import com.github.millefoglie.latex.node.AbstractLatexNode;
 import com.github.millefoglie.latex.node.CompoundLatexNode;
+import com.github.millefoglie.latex.node.LatexChildNode;
 import com.github.millefoglie.latex.node.LatexNode;
 import com.github.millefoglie.latex.node.LatexNodeType;
 import com.github.millefoglie.latex.node.SimpleLatexNode;
@@ -15,11 +16,16 @@ class ScopeStack {
 
     void openScope(CompoundLatexNode node) {
         Objects.requireNonNull(node);
+        ScopeFrame scopeFrame = new ScopeFrame(node);
 
-        scopeStack.push(new ScopeFrame(node));
+        if (node.getType() == LatexNodeType.ENVIRONMENT) {
+            scopeFrame.setBracketsNodeAllowed(true);
+        }
+
+        scopeStack.push(scopeFrame);
     }
 
-    <T extends LatexNode> void closeScope(LatexNodeType nodeType) {
+    void closeScope(LatexNodeType nodeType) throws LatexParserException {
         Objects.requireNonNull(nodeType);
 
         if (scopeStack.isEmpty()) {
@@ -27,6 +33,8 @@ class ScopeStack {
         } else if ((scopeStack.size() == 1) && (nodeType != LatexNodeType.ROOT)) {
             throw new RuntimeException("Cannot close scope");
         }
+
+        ensureScope(nodeType);
 
         ScopeFrame currentScope = scopeStack.pop();
         CompoundLatexNode scopeNode = currentScope.getNode();
@@ -37,26 +45,48 @@ class ScopeStack {
             }
 
             ScopeFrame enclosingScope = scopeStack.peek();
+            CompoundLatexNode enclosingScopeNode = enclosingScope.getNode();
+            Emitter emitter = enclosingScope.getEmitter();
 
-            enclosingScope.getNode().appendChild(scopeNode);
-        } else {
-            if (scopeStack.isEmpty()) {
-                throw new RuntimeException("No open scopes present");
-            } else if (scopeNode.getType() != LatexNodeType.BRACKETS) {
-                throw new RuntimeException("Cannot close scope");
+            if (emitter.canEmit(enclosingScopeNode, scopeNode)) {
+                emitter.emit(enclosingScopeNode, scopeNode);
+            } else {
+                throw new IllegalStateException();  // TODO
             }
+        }
+    }
 
-            ScopeFrame enclosing = scopeStack.peek();
+    void ensureScope(LatexNodeType nodeType) throws LatexParserException {
+        if (scopeStack.isEmpty()) {
+            throw new RuntimeException("No open scopes present");
+        }
 
-            if (enclosing == null) {
-                throw new RuntimeException("Cannot close scope");
+        ScopeFrame currentFrame = scopeStack.peek();
+        CompoundLatexNode currentNode = currentFrame.getNode();
+
+        if (currentNode.getType() == nodeType) {
+            return;
+        } else if (currentNode.getType() != LatexNodeType.BRACKETS) {
+            throw new IllegalStateException("Cannot close scope");
+        }
+
+        scopeStack.pop();
+        ScopeFrame enclosingFrame = scopeStack.peek();
+
+        if (enclosingFrame == null) {
+            throw new RuntimeException("Cannot close scope");
+        }
+
+        CompoundLatexNode enclosingNode = enclosingFrame.getNode();
+        Emitter emitter = enclosingFrame.getEmitter();
+        LatexChildNode openingBracketNode = new SimpleLatexNode(LatexNodeType.TEXT, "[");
+
+        if (emitter.canEmit(enclosingNode, openingBracketNode)) {
+            emitter.emit(enclosingNode, openingBracketNode);
+
+            for (LatexChildNode e : currentNode.getChildren()) {
+                emitter.emit(enclosingNode, e);
             }
-
-            CompoundLatexNode enclosingNode = enclosing.getNode();
-
-            enclosingNode.appendChild(new SimpleLatexNode(LatexNodeType.TEXT, "["));
-            scopeNode.getChildren().forEach(enclosingNode::appendChild);
-            closeScope(nodeType);
         }
     }
 
@@ -64,11 +94,20 @@ class ScopeStack {
         return scopeStack.peek();
     }
 
-    void emitNode(AbstractLatexNode node) {
+    void emitNode(AbstractLatexNode node) throws LatexParserException {
         if (scopeStack.isEmpty()) {
             throw new RuntimeException("Cannot emit node");
         }
 
-        scopeStack.peek().getNode().appendChild(node);
+        ScopeFrame scopeFrame = scopeStack.peek();
+        Emitter emitter = scopeFrame.getEmitter();
+        LatexNode parentNode = scopeFrame.getNode();
+
+        if (emitter.canEmit(parentNode, node)) {
+            emitter.emit(parentNode, node);
+        } else {
+            closeScope(parentNode.getType());
+            emitNode(node);
+        }
     }
 }

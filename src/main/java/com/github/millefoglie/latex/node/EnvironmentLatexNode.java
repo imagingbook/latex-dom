@@ -1,6 +1,5 @@
 package com.github.millefoglie.latex.node;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EnvironmentLatexNode extends CompoundLatexNode {
@@ -8,8 +7,8 @@ public class EnvironmentLatexNode extends CompoundLatexNode {
             LatexNodeType.ENVIRONMENT, LatexNodeType.CUSTOM
     );
 
-    private final List<LatexNode> opening = new ArrayList<>(1);
-    private final List<LatexNode> closing = new ArrayList<>(2);
+    private CompoundLatexNode opening;
+    private CompoundLatexNode closing;
 
     public EnvironmentLatexNode(LatexNodeType type) {
         super(type);
@@ -24,11 +23,27 @@ public class EnvironmentLatexNode extends CompoundLatexNode {
         }
     }
 
-    public void appendOpening(LatexNode node) {
-        opening.add(node);
+    public CompoundLatexNode getOpening() {
+        return opening;
     }
 
-    public void appendClosing(LatexNode node) {
-        closing.add(node);
+    public CompoundLatexNode getClosing() {
+        return closing;
+    }
+
+    public void appendOpening(LatexChildNode node) {
+        if (opening == null) {
+            opening = new CompoundLatexNode(LatexNodeType.ROOT);
+        }
+
+        opening.appendChild(node);
+    }
+
+    public void appendClosing(LatexChildNode node) {
+        if (closing == null) {
+            closing = new CompoundLatexNode(LatexNodeType.ROOT);
+        }
+
+        closing.appendChild(node);
     }
 }
