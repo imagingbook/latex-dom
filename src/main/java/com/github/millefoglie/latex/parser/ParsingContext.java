@@ -47,7 +47,7 @@ class ParsingContext {
         contentBuilder.delete(0, contentBuilder.length());
     }
 
-    public void emitNode(AbstractLatexNode node) {
+    public void emitNode(AbstractLatexNode node) throws LatexParserException {
         scopeStack.emitNode(node);
         updateScopeFrameFlags(node);
     }

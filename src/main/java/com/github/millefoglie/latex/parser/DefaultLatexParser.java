@@ -112,7 +112,7 @@ public class DefaultLatexParser implements LatexParser {
         }
     }
 
-    private void appendText(ParsingContext context, String str) {
+    private void appendText(ParsingContext context, String str) throws LatexParserException {
         if ((str == null) || (str.length() == 0)) {
             throw new IllegalArgumentException("Empty token value encountered");
         }
@@ -126,7 +126,7 @@ public class DefaultLatexParser implements LatexParser {
         }
     }
 
-    private void flushText(ParsingContext context) {
+    private void flushText(ParsingContext context) throws LatexParserException {
         if (context.hasContent()) {
             context.emitNode(new SimpleLatexNode(LatexNodeType.TEXT, context.getContent()));
         }
@@ -178,7 +178,7 @@ public class DefaultLatexParser implements LatexParser {
     }
 
     // TODO check if line endings are processed correctly
-    private void parseComment(ParsingContext context) throws IOException {
+    private void parseComment(ParsingContext context) throws IOException, LatexParserException {
         LatexToken token = context.getNextToken();
 
         while ((token != null) && (token.getValue().indexOf('\n') < 0)) {
