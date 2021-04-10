@@ -50,6 +50,10 @@ public class DefaultLatexParser implements LatexParser {
                 flushText(context);
                 context.emitNode(new SimpleLatexNode(LatexNodeType.WHITESPACE, token.getValue()));
             }
+            case PUNCTUATION -> {
+                flushText(context);
+                context.emitNode(new SimpleLatexNode(LatexNodeType.TEXT, token.getValue()));
+            }
             case BACKSLASH -> {
                 flushText(context);
                 parseBackslashChunk(context);
@@ -100,11 +104,6 @@ public class DefaultLatexParser implements LatexParser {
                 flushText(context);
                 context.emitNode(new SimpleLatexNode(LatexNodeType.AMPERSAND, token.getValue()));
             }
-//            case AT -> {
-//                // TODO check latex rules
-//                flushText();
-//                context.emitNode(new SimpleLatexNode(LatexNodeType.AT, token.getValue()));
-//            }
             default -> appendText(context, token.getValue());
             }
 
@@ -134,7 +133,6 @@ public class DefaultLatexParser implements LatexParser {
         context.clearContent();
     }
 
-    // TODO add environments handling
     private void parseBackslashChunk(ParsingContext context) throws IOException, LatexParserException {
         LatexToken token = context.getNextToken();
 
@@ -158,7 +156,31 @@ public class DefaultLatexParser implements LatexParser {
             context.getScopeStack().closeScope(LatexNodeType.INLINE_MATH);
         }
         default -> {
-            switch (token.getValue()) {
+            if ((token.getType() == LatexTokenType.AT) && !context.isAtLetterEnabled()) {
+                context.emitNode(new SimpleLatexNode(LatexNodeType.COMMAND, token.getValue()));
+                context.clearContent();
+                return;
+            }
+
+            do {
+                context.appendContent(token.getValue());
+                token = context.getNextToken();
+            } while ((token != null)
+                    && ((token.getType() == LatexTokenType.LETTERS) || (token.getType() == LatexTokenType.AT)));
+
+            context.queueToken(token);
+
+            String content = context.getContent();
+
+            switch (content) {
+            case "makeatletter":
+                context.setAtLetterEnabled(true);
+                context.emitNode(new SimpleLatexNode(LatexNodeType.COMMAND, content));
+                break;
+            case "makeatother":
+                context.setAtLetterEnabled(false);
+                context.emitNode(new SimpleLatexNode(LatexNodeType.COMMAND, content));
+                break;
             case "begin":
                 EnvironmentLatexNode envNode = new EnvironmentLatexNode(LatexNodeType.ENVIRONMENT);
                 context.getScopeStack().openScope(envNode);
@@ -169,7 +191,7 @@ public class DefaultLatexParser implements LatexParser {
             case "end":
                 context.getScopeStack().ensureScope(LatexNodeType.ENVIRONMENT);
             default:
-                context.emitNode(new SimpleLatexNode(LatexNodeType.COMMAND, token.getValue()));
+                context.emitNode(new SimpleLatexNode(LatexNodeType.COMMAND, content));
             }
 
             context.clearContent();

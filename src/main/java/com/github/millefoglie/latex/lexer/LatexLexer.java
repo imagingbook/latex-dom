@@ -49,27 +49,27 @@ public class LatexLexer {
 
         if (Character.isLetter(c)) {
             readWhile(Character::isLetter);
-            return emitToken(LatexTokenType.TEXT);
+            return emitToken(LatexTokenType.LETTERS);
         }
 
         if (Character.isDigit(c)) {
             if (previousTokenType == LatexTokenType.BACKSLASH) {
-                return emitToken(LatexTokenType.TEXT);
+                return emitToken(LatexTokenType.DIGITS);
             }
 
             readWhile(Character::isDigit);
-            return emitToken(LatexTokenType.TEXT);
+            return emitToken(LatexTokenType.DIGITS);
         }
 
         if (specialPunctuationTrie.containsPrefix(stringBuilder)) {
             if (previousTokenType == LatexTokenType.BACKSLASH) {
-                return emitToken(LatexTokenType.TEXT);
+                return emitToken(LatexTokenType.PUNCTUATION);
             }
 
             readSpecialPunctuation();
 
             if (stringBuilder.length() > 1) {
-                return emitToken(LatexTokenType.TEXT);
+                return emitToken(LatexTokenType.PUNCTUATION);
             }
         }
 
@@ -87,7 +87,7 @@ public class LatexLexer {
             case '%' -> LatexTokenType.PERCENT;
             case '&' -> LatexTokenType.AMPERSAND;
             case '@' -> LatexTokenType.AT;
-            default -> LatexTokenType.TEXT;
+            default -> LatexTokenType.PUNCTUATION;
         };
 
         return emitToken(type);
@@ -132,7 +132,10 @@ public class LatexLexer {
     }
 
     private LatexToken emitToken(LatexTokenType type) {
-        String value = (type == LatexTokenType.TEXT) || (type == LatexTokenType.WHITESPACE)
+        String value = (type == LatexTokenType.LETTERS)
+                || (type == LatexTokenType.DIGITS)
+                || (type == LatexTokenType.PUNCTUATION)
+                || (type == LatexTokenType.WHITESPACE)
                 ? stringBuilder.toString() : null;
 
         LatexToken token = value == null

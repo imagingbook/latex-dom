@@ -15,6 +15,8 @@ class ParsingContext {
     private final Deque<LatexToken> tokenQueue = new LinkedList<>();
     private final StringBuilder contentBuilder = new StringBuilder();
 
+    private boolean atLetterEnabled;
+
     public ParsingContext(LatexLexer lexer) {
         this.lexer = lexer;
     }
@@ -45,6 +47,14 @@ class ParsingContext {
 
     public void clearContent() {
         contentBuilder.delete(0, contentBuilder.length());
+    }
+
+    public boolean isAtLetterEnabled() {
+        return atLetterEnabled;
+    }
+
+    public void setAtLetterEnabled(boolean atLetterEnabled) {
+        this.atLetterEnabled = atLetterEnabled;
     }
 
     public void emitNode(AbstractLatexNode node) throws LatexParserException {

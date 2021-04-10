@@ -1,7 +1,9 @@
 package com.github.millefoglie.latex.lexer;
 
 public enum LatexTokenType {
-    TEXT(""),
+    LETTERS(""),
+    DIGITS(""),
+    PUNCTUATION(""),
     WHITESPACE(" "),
     BACKSLASH("\\"),
     OPENING_BRACE("{"),
