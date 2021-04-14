@@ -10,10 +10,12 @@ import com.github.millefoglie.latex.node.EnvironmentLatexNode;
 import com.github.millefoglie.latex.node.LatexNodeType;
 import com.github.millefoglie.latex.node.MathLatexNode;
 import com.github.millefoglie.latex.node.SimpleLatexNode;
+import com.github.millefoglie.latex.node.VerbatimLatexNode;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 /**
  * LaTeX DOM parser.
@@ -45,6 +47,24 @@ public class DefaultLatexParser implements LatexParser {
         ScopeStack scopeStack = context.getScopeStack();
 
         while (token != null) {
+            if (context.isVerbatim()) {
+                if ((token.getType() == LatexTokenType.BACKSLASH)) {
+                    if (isVerbatimEnvironmentClosing(context)) {
+                        context.emitNode(new VerbatimLatexNode(context.getContent()));
+                        context.clearContent();
+                        context.setVerbatim(false);
+                        context.skipTokens(4);
+                    } else {
+                        context.appendContent(token.getValue());
+                    }
+                } else {
+                    context.appendContent(token.getValue());
+                }
+
+                token = context.getNextToken();
+                continue;
+            }
+
             switch (token.getType()) {
             case WHITESPACE -> {
                 flushText(context);
@@ -134,6 +154,13 @@ public class DefaultLatexParser implements LatexParser {
     }
 
     private void parseBackslashChunk(ParsingContext context) throws IOException, LatexParserException {
+        if (isVerbatimEnvironmentOpening(context)) {
+            context.skipTokens(4);
+            context.setVerbatim(true);
+            context.clearContent();
+            return;
+        }
+
         LatexToken token = context.getNextToken();
 
         if (token == null) {
@@ -168,7 +195,7 @@ public class DefaultLatexParser implements LatexParser {
             } while ((token != null)
                     && ((token.getType() == LatexTokenType.LETTERS) || (token.getType() == LatexTokenType.AT)));
 
-            context.queueToken(token);
+            context.returnToQueue(token);
 
             String content = context.getContent();
 
@@ -209,7 +236,7 @@ public class DefaultLatexParser implements LatexParser {
         }
 
         if (token != null) {
-            context.queueToken(token);
+            context.returnToQueue(token);
         }
 
         context.emitNode(new SimpleLatexNode(LatexNodeType.COMMENT, context.getContent()));
@@ -245,7 +272,33 @@ public class DefaultLatexParser implements LatexParser {
         }
 
         if (nextToken.getType() != LatexTokenType.DOLLAR) {
-            context.queueToken(nextToken);
+            context.returnToQueue(nextToken);
         }
+    }
+
+    private boolean isVerbatimEnvironmentOpening(ParsingContext context) throws IOException {
+        List<LatexToken> tokens = context.lookAhead(4);
+        int i = 0;
+
+        return (tokens.size() == 4)
+                && (tokens.get(i).getType() == LatexTokenType.LETTERS)
+                && ("begin".equals(tokens.get(i).getValue()))
+                && (tokens.get(++i).getType() == LatexTokenType.OPENING_BRACE)
+                && (tokens.get(++i).getType() == LatexTokenType.LETTERS)
+                && ("verbatim".equals(tokens.get(i).getValue()))
+                && (tokens.get(++i).getType() == LatexTokenType.CLOSING_BRACE);
+    }
+
+    private boolean isVerbatimEnvironmentClosing(ParsingContext context) throws IOException {
+        List<LatexToken> tokens = context.lookAhead(4);
+        int i = 0;
+
+        return (tokens.size() == 4)
+                && (tokens.get(i).getType() == LatexTokenType.LETTERS)
+                && ("end".equals(tokens.get(i).getValue()))
+                && (tokens.get(++i).getType() == LatexTokenType.OPENING_BRACE)
+                && (tokens.get(++i).getType() == LatexTokenType.LETTERS)
+                && ("verbatim".equals(tokens.get(i).getValue()))
+                && (tokens.get(++i).getType() == LatexTokenType.CLOSING_BRACE);
     }
 }

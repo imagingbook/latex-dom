@@ -6,8 +6,10 @@ import com.github.millefoglie.latex.node.AbstractLatexNode;
 import com.github.millefoglie.latex.node.LatexNode;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 class ParsingContext {
     private final LatexLexer lexer;
@@ -16,6 +18,7 @@ class ParsingContext {
     private final StringBuilder contentBuilder = new StringBuilder();
 
     private boolean atLetterEnabled;
+    private boolean verbatim;
 
     public ParsingContext(LatexLexer lexer) {
         this.lexer = lexer;
@@ -29,8 +32,45 @@ class ParsingContext {
         return tokenQueue.isEmpty() ? lexer.next() : tokenQueue.poll();
     }
 
-    public void queueToken(LatexToken token) {
-        tokenQueue.offer(token);
+    public List<LatexToken> lookAhead(int size) throws IOException {
+        if (size < 1) {
+            throw new IllegalArgumentException("Cannot look ahead non-positive number of tokens");
+        }
+
+        List<LatexToken> result = new ArrayList<>(size);
+        LatexToken token;
+        int i = 0;
+
+        do {
+            token = getNextToken();
+
+            result.add(token);
+            i++;
+        } while ((token != null) && (i < size));
+
+        for (int j = result.size() - 1; j >= 0; j--) {
+            returnToQueue(result.get(j));
+        }
+
+        return result;
+    }
+
+    public void returnToQueue(LatexToken token) {
+        tokenQueue.addFirst(token);
+    }
+
+    public void skipTokens(int size) throws IOException {
+        if (size < 1) {
+            throw new IllegalArgumentException("Cannot skip non-positive number of tokens");
+        }
+
+        LatexToken token;
+        int i = 0;
+
+        do {
+            token = getNextToken();
+            i++;
+        } while ((token != null) && (i < size));
     }
 
     public void appendContent(String content) {
@@ -55,6 +95,14 @@ class ParsingContext {
 
     public void setAtLetterEnabled(boolean atLetterEnabled) {
         this.atLetterEnabled = atLetterEnabled;
+    }
+
+    public boolean isVerbatim() {
+        return verbatim;
+    }
+
+    public void setVerbatim(boolean verbatim) {
+        this.verbatim = verbatim;
     }
 
     public void emitNode(AbstractLatexNode node) throws LatexParserException {

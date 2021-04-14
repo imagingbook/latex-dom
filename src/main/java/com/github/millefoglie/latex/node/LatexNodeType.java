@@ -21,8 +21,7 @@ public enum LatexNodeType {
     DISPLAY_MATH,
     INLINE_MATH,
 
-    // environment node type
     ENVIRONMENT,
-
+    VERBATIM,
     CUSTOM
 }

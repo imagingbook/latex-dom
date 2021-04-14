@@ -81,7 +81,7 @@ public class EnvironmentNodeEmitter implements Emitter {
             throw new LatexParserException("Environment must have an opening with a name");    // TODO
         }
 
-        LatexNode node = opening.getLastChild();
+        LatexNode node = opening.getFirstChild();
 
         while ((node != null) && (node.getType() == LatexNodeType.WHITESPACE)) {
             node = node.getNextSibling();
