@@ -1,0 +1,60 @@
+% This is a test file
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{graphicx}
+
+% The parser can't tell what mode this command is going to be used
+% in.
+\newcommand{\boldstuff}[1]{{\bf #1}}
+
+\title{Sample Document}
+\author{Me}
+
+\begin{document}
+\maketitle
+
+This is a test {\sffamily document} that uses {\bfseries  deprecated} code.
+Figure~\ref{fig:sample} shows a sample {\itshape image}.
+  Verbatim text like \verb|\bf| or \verb|\sf| shouldn't be
+modified. 
+\begin{verbatim}
+   Some \bf verbatim text.
+\end{verbatim}
+
+Some maths: $\mathbf{x}$, \begin{math}\mathcal{X}\end{math},
+\(\mathtt{y}\).
+\[
+  \mathbf{x}; \mathcal{Y}; \mathtt{z}
+\]
+
+   {\par\centering X\par}
+
+\begin{figure}
+{\par\centering\includegraphics{sampleimg}\par}
+\caption{A Sample Image}
+\label{fig:sample}
+\end{figure}
+
+\[y = \sum_{i=1}^{n} \xi_{i}\]
+
+\[\mathbf{x}; \mathcal{Y} \mathit{z}\]
+
+\begin{displaymath}
+\mathbf{x}; \mathcal{Y} \mathit{z}
+\end{displaymath}
+
+\begin{equation}
+\mathbf{x}; \mathcal{Y} \mathit{z}
+\end{equation}
+
+\boldstuff{Bold text} and $\boldstuff{bold math}$.
+
+\begin{table}
+{\begin{tabular}{lll}
+A & B & C\\
+1 & $2$ & 3
+\end{tabular}
+}
+\end{table}
+
+\end{document}
