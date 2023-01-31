@@ -1,0 +1,568 @@
+\documentclass[a4paper]{article}
+
+\RequirePackage[utf8]{inputenc}		% remove when using lualatex oder xelatex!
+\RequirePackage{xcolor}
+\RequirePackage{comment}
+\RequirePackage{verbatim}
+\RequirePackage{amsmath}
+\author{Wilhelm Burger\\ 
+\texttt{wilbur@ieee.org}}
+
+\title{How LaTeX Handles White Space and Newlines}
+\date{}
+
+%%%----------------------------------------------------------
+\begin{document}
+%%%----------------------------------------------------------
+\maketitle
+%%%----------------------------------------------------------
+\clearpage
+\tableofcontents
+\clearpage
+%%%----------------------------------------------------------
+
+\begin{abstract}\noindent
+This document shows the handling of white space and new/blank lines, as
+well as LaTeX's behavior in various other situations.
+\end{abstract}
+
+\section{Whitespace and Newlines}
+
+These are test cases used in the parser test (\verb!Test_MULTISTRING!).
+Empty lines contain nothing or only horizontal whitespace.
+
+\paragraph{A. A single newline is treated as whitespace:} ~\\
+\verb!"a simple   newline\nin the text"!\\
+a simple   newline
+in the text
+
+\paragraph{B. A pair of newlines makes a paragraph:} ~\\
+\verb!"a pair of new lines\n\nmakes a paragraph"!\\
+a pair of new lines
+
+makes a paragraph
+
+
+\paragraph{C. Two or more successive empty lines makes a paragraph (same as above):} ~\\
+\verb!"a pair of \n\t \n empty lines"!\\
+a pair of 
+	
+ empty lines
+	
+\paragraph{D. blank lines with a trailing comment are not considered empty:} ~\\
+\verb!"a blank line\n   %comment\nwith a trailing comment"!\\
+a blank line
+   %comment
+with a trailing comment
+
+\section{What's allowed in textmode}
+
+\begin{enumerate}
+\item
+	Are underscores allowed in \verb!text_mode!? NO (math mode only)!
+\item
+	Here is an accented character in foo\`{o}zzle or ba\c is.
+\item
+	What happens to a standalone \verb!\-! (optional hyphen) like \- here? 
+	It inserts extra space, no error!
+	Even multiple insertions \-\-\-\- are OK.
+\end{enumerate}
+
+\section{Comments and Newlines}
+
+\noindent\textbf{Case 1:}
+Everything after a trailing {\color{blue}comment%comment
+    IS} ignored, even if followed by a line with leading blanks (or tabs) -- 
+which are \textbf{all ignored}.
+This means that ALL leading white space must be ignored too!
+Note that the newline after the comment is NOT considered white space!
+\begin{verbatim*}
+Everything after a trailing {\color{blue}comment%comment
+    IS} ignored, even if followed by a line with leading blanks 
+(or tabs) -- which are \textbf{all ignored}.
+\end{verbatim*}
+
+\bigskip\noindent\textbf{Case 2:}	
+A line which starts with a \%-sign is {\color{blue}ignored,
+		%
+even} if it contains leading whitespace. It is not treated as an empty line (paragraph).
+Note that the \texttt{newline} after ``ignored,'' IS considered white space!
+\begin{verbatim*}
+A line which starts with a \%-sign is {\color{blue}ignored,
+      %
+even} if it contains leading whitespace.
+\end{verbatim*}
+
+\bigskip\noindent\textbf{Case 3:}
+One or more empty lines are {\color{blue}treated as
+    
+new} paragraphs, even if they contain white space (but nothing else).
+\begin{verbatim*}
+One or more empty lines are {\color{blue}treated as
+    
+new} paragraphs, even if they contain white space ...
+\end{verbatim*}
+
+
+
+\bigskip\noindent\textbf{Case 4:}
+If a line ends with a {\color{blue}comment%
+      
+then} the subsequent empty line(s) is still treated as a paragraph.
+Interesting: {\color{red}braces may stretch over paragraphs!}
+\begin{verbatim*}
+If a line ends with a {\color{blue}comment%
+      
+then} the subsequent empty line(s) is still treated as a paragraph.
+\end{verbatim*}
+
+
+
+\bigskip\noindent\textbf{Case 5:}
+Multiple lines with {\color{blue}comments%
+   %
+%
+% anything
+		%    anything
+are} treated as a single, contiguous comment!
+\begin{verbatim*}
+Multiple lines with {\color{blue}comments%
+   %
+%
+% anything
+		%    anything
+are} treated as a single, contiguous comment!
+\end{verbatim*}
+
+
+
+\section{Whitespace with commands}
+
+\noindent\textbf{Case 1:}
+Whitespace between the command and its \textbf {argument} does not matter,
+as in \verb*!\textbf {argument}!.
+Even a \emph{single} \textbf
+{newline}
+is OK before the argument.
+
+
+\bigskip\noindent\textbf{Case 2:}
+Leading whitespace in a command-\textbf{ argument} is \emph{not} ignored,
+as in \verb*!command-\textbf{ argument}!.
+
+\bigskip\noindent\textbf{Case 3:}
+Some commands like \thesection      
+do consume all subsequent whitespace, such as \verb*!\thesection   !.
+
+
+\section{Whitespace with environments}
+
+\noindent\textbf{Case 1:}
+If we leave a blank after \verb*!\begin!, as in \begin   {tiny}this is tiny text\end{tiny} 
+this does not matter.
+Even a line break after \verb*!\begin! \begin   %
+  %
+{tiny}is allowed.\end{tiny}.
+
+\bigskip\noindent\textbf{Case 2:}
+However, it is an \textbf{error} to write \verb*!\begin{ tiny}! or \verb*!\begin{tiny }!
+instead of \verb!\begin{tiny}!.
+
+
+
+\section{Special characters}
+
+\subsection{Reserved characters}
+
+Characters not allowed in normal text are  
+\begin{itemize}\itemsep0pt
+\item[\texttt{\%}] starts a comment,
+\item[\texttt{\$}] starts inline math,
+\item[\texttt{\#}] only for macro parameters,
+\item[\texttt{\_}] underscore only allowed in math mode,
+\item[\texttt{\&}] only as alignment tab in tables.
+\end{itemize}
+%
+These are OK: @.
+
+
+\subsection{Escaped characters}
+
+These are \%, \$, \#, \_, \& (\verb!\%, \$, \#, \_, \&!).
+
+
+
+\subsection{Parentheses and brackets}
+
+Parentheses (in plain text) ave no special meaning.
+Unbalanced (parentheses] do [no harm).
+Pairs of brackets [alone] are permitted everywhere
+(not only as optional command arguments).
+
+
+%%%----------------------------------------------------------
+
+\section{Labels}
+\label{sec:this 123}
+\label{a]bra}
+
+\noindent\textbf{Case 1:}
+Labels such as ``\verb!sec:this 123!'' are legal and can be properly referenced (\ref{sec:this 123}).
+Thus digits and blanks are allowed, but also 
+\verb*" :;,.!_$&/()[]=?*+-@^|"
+and even
+\verb*!"'!. The latter should be discouraged!
+%(\ref{a]bra})
+
+\bigskip\noindent\textbf{Case 2:}
+Umlauts (and probably most other UTF-characters) are not allowed in labels.
+
+
+
+%%%----------------------------------------------------------
+
+\section{Spacing}
+
+\begin{itemize}
+\item Text: Here we{\thinspace}use\,thinspace (\verb!\thinspace! \verb!\,!).
+\item Text: Here we\ use regular space (\verb*!\ !).
+It also works with a\
+newline (i.e., if the \verb"\" is at the end of the line)!
+\item Text: Here we use~tilde (\verb!~!).
+\item Text: Here we use\enspace enspace (\verb!\enspace!).
+
+
+\item Math space (thin): $a\,b$ (\verb!\,!).
+\item Math space (med): $a\:b$ (\verb!\:! or \verb!\>!).
+\item Math space (thick): $a\;b$ (\verb!\;!).
+\end{itemize}
+
+\noindent
+Are these the same?:
+\\
+Spacing at a newline Fig.\
+3.10 (newline).
+\\
+Spacing at a newline Fig.\ 3.10 (no newline).
+\\
+Spacing at a newline Fig.\	3.10 (w.\ tab).
+\\
+Spacing at a newline Fig. 3.10 (without \verb*!\ !).
+
+
+%%%----------------------------------------------------------
+
+\section{Manual line breaks}
+
+\noindent
+In this text we break the line\\
+at this point.
+
+\noindent
+In this text we break the line\\*
+at this point.
+
+
+\noindent
+In this text we break the line\linebreak
+at this point.
+
+\noindent
+In this text we break the line\break
+at this point.
+
+%%%----------------------------------------------------------
+
+\newcommand{\foo}[2][default]{Mandatory: #2; optional: #1}
+
+\section[Ze Command Section]{Commands}
+
+This section entry carries an optional argument for the TOC (\verb![Ze Command Section]!):
+\begin{itemize}
+\item
+LaTeX appears to read optional arguments by only scanning for the next-following \verb!]!.
+\item
+Thus no nesting of \verb![..]! is allowed inside, otherwise LaTeX gets confused (no error though).
+\item
+Blocks \verb!{..}! are allowed.
+\item
+Commands are allowed, but none with optional parameters in \verb![..]!
+\item
+Inline math is allowed.
+\end{itemize}
+
+
+%%%----------------------------------------------------------
+
+\section{Environments}
+
+Unbalanced environments should confuse LaTeX. The following two examples should work properly:
+
+\begin{center}
+outer text
+\begin{quote}
+inner text
+\end{quote}
+\end{center}
+
+
+\begin{quote}
+outer text
+\begin{center}
+inner text
+\end{center}
+\end{quote}
+
+But this gives an error:
+\begin{verbatim}
+  \begin{quote}
+     outer text
+     \begin{center}
+      inner text
+    \end{quote}
+  \end{center}
+\end{verbatim}
+
+
+
+
+
+%%%----------------------------------------------------------
+
+\section{Comment environment}
+
+The \verb!\begin{comment}! may be placed anywhere in a line and
+\verb!\end{comment}! as well.
+Note that the rest of the line following \verb!\end{comment}! is also ignored!
+%
+\begin{verbatim}
+\begin{comment}
+some comment text ...
+  \end{comment}  this is IGNORED
+\end{verbatim}
+%
+Thus there should be only a blank space between here: \begin{comment} some comment text ...
+   \end{comment}  this is ignored
+and the following text.
+
+\noindent
+This single-line comment environments are valid too with the same rules as above:
+%
+\begin{verbatim}
+\begin{comment} some comment text ... \end{comment} IGNORED!
+\end{verbatim}
+
+%\begin{comment}   \end{comment}
+%%\begin{comment}
+%some comments ...
+%%\end{comment}
+%\end{comment}
+
+\section{Verbatim text}
+
+\subsection{Inline verbatim with \texttt{verb}}
+
+%This is regular \verb!verbatim text! without any newlines in it.
+\verb!\verb! must not contain an end of line!
+The delimiting character following \verb!\verb! may be any non-character, including 
+`\texttt{*}' (even blank is allowed!).
+Thus \verb!\verb**\foo*! works!
+
+The delimiting character may be a number, as in \verb!\verb6verbatim text6!.
+Underscores \verb_also work_, as do \verb"double quotes" and \verb'single quotes',
+even \verb!%! signs.
+
+\verb!\verb*! makes readable blank spaces:
+as in \verb*+this small example+. It does accept \texttt{*} as a delimiting character.
+
+If \verb!\verb! runs to the end of the current line!
+but is not properly terminated, this results in an error!
+
+If \verb!\verb! is followed by a \% symbol
+   then the following newline (and following whitespace) is ignored (as usual)!
+
+
+
+\subsection{Standard \texttt{verbatim} environments}
+
+Of course, \begin{verbatim}verbatim may extend 
+
+over multiple\end{verbatim}
+lines.
+In any event, \verb!\begin{verbatim}! starts a new line and another
+new line is added after \verb!\end{verbatim}!.
+
+\verb!\begin{verbatim}! and \verb!\end{verbatim}! may be placed
+anywhere in a line.
+\verb!\end{verbatim}! may be placed even after a \% sign.
+
+
+\subsection{\texttt{verbatim} nesting}
+
+verbatim can not be nested.
+
+
+\subsection{Custom \texttt{verbatim} environments}
+There may be custom verbatim environments defined by the \verb!verbatim! package.
+
+
+
+\subsection{\texttt{listings} and friends}
+
+For example,
+\begin{verbatim}
+\begin{lstlisting}[frame=trBL]
+for i:=maxint to 0 do
+begin
+{ do nothing }
+end;
+\end{lstlisting}
+\end{verbatim}
+
+
+
+\section{Special Symbols}
+
+\% \$ \# \_ \& \{ \} \P \S \i \j \o \O
+
+\section{Accented Characters}
+
+White space is accepted after the accent command:\newline
+\`o \` o \`{o} / 
+\'o \' o \'{o} /
+\^o \^ o \^{o} /
+\"o
+\~o
+\u o
+\=o
+\.o
+\b{a}
+\d o
+\t oo
+\v o
+\H o
+\c o
+\"{\i}
+
+\noindent
+\i 
+\j
+\o
+\O
+
+
+
+\section{UTF Character Checks}
+
+\subsection{Basic Latin (U+0000 \ldots U+007F)}
+\begin{verbatim*}
+ !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ
+[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+\end{verbatim*}
+in addition to the control characters
+\verb!\n! and \verb!\t!  (we don't accept \verb!\r!).\\
+ACUTE ACCENT (U+00B4): not allowed!
+
+%\section{German umlauts}
+%\begin{verbatim}
+%äöüÄÖÜ
+%\end{verbatim}
+
+
+\subsection{Latin1 supplement (U+0080 \ldots U+00FF)}
+\begin{verbatim}
+ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ
+¡§¿®
+\end{verbatim}
+%not available: Ð×Þð÷þµ°
+
+
+\subsection{Latin1 Extended-A (U+0100 \ldots U+017F)}
+
+\begin{verbatim}
+ĀāĂăĆćĈĉĊċČčĎďĒēĔĕĖėĚěĜĝĞğĠġĢģĤĥĨĩĪīĬĭİıĲĳĴĵĶķĹĺĻļĽľŁł
+ŃńŅņŇňŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŨũŪūŬŭŮůŰűŴŵŶŷŸŹźŻżŽž
+\end{verbatim}
+% not: ĄąĐđĘęĦħĮįĸĿŀŉŊŋŦŧŲųſ
+
+
+\subsection{Latin1 Extended-B (U+0180 \ldots U+024F)}
+
+\begin{verbatim}
+ǍǎǏǐǑǒǓǔǢǣǦǧǨǩǰ
+\end{verbatim}
+
+
+%Beta (β) is not supported.
+
+\section{Quotation marks}
+
+Using “foreign” (compare to ``foreign'') quotation marks does not produce an error but yields
+the same results as the original LaTeX marks.
+
+
+
+\section{Specific LaTeX Commands}
+
+\begin{itemize}
+\item \verb!\break! inserts a line break: Blabla \hfil\break and so on.
+\item What does \verb!#! do? -- only allowed as macro parameter number!
+\item Can \verb!&! be used outside tables? - No, not allowed!
+\end{itemize}
+
+
+\section{Math stuff}
+
+\subsection{Inline math -- text commands}
+
+\begin{itemize}\itemsep0pt
+\item
+Inside math, \verb!\text{...}! returns to text mode. $a^b = c, \text{for all time}$.
+\item
+Same with \verb!\textrm{...}!: $a^b = c, \textrm{for all time}$.
+\item
+Same with \verb!\textit{...}!: $a^b = c, \textit{for all time}$.
+\item
+Same with \verb!\textsl{...}!: $a^b = c, \textsl{for all time}$.
+\item
+Same with \verb!\textsf{...}!: $a^b = c, \textsf{for all time}$.
+\item
+Same with \verb!\texttt{...}!: $a^b = c, \texttt{for all time}$.
+\item
+What happens without braces?: $a^b = c, \text for all time $.
+\item
+Can \verb!\text{...}! be used outside math mode?: \textit{outside math} -- yes!
+\item
+Can \verb!\mathrm{...}! be used outside math mode?: %\mathrm{outside math} 
+-- no!
+\item
+Does \verb!$\mathrm{...}$! leave math mode?: $\mathrm{a_0 = x^2}$ -- no.
+\end{itemize}
+
+
+\subsection{Inline math -- line breaking commands}
+
+\begin{itemize}\itemsep0pt
+\item
+Paragraph (\verb!\par!) in math mode? No! %$x = \par y$
+\item
+\verb!\newline! in math mode? Yes:  $x = \newline y$
+\item
+\verb!\\! in math mode? Yes:  $x = \\ y$
+\end{itemize}
+
+
+
+\subsection{Inline math -- verbatim}
+
+\begin{itemize}\itemsep0pt
+\item
+Can math contain verb? $a^b = c,\ \verb!stuff!\ \text{for all time}$ -- yes!
+\item
+Can math contain verbatim \emph{environment}?
+%$a^b = c,\ \begin{verbatim}stuff\end{verbatim} \text{for all time}$ 
+-- no!
+\end{itemize}
+
+
+\end{document}
