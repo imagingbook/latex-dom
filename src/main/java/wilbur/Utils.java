@@ -39,7 +39,9 @@ public class Utils {
 
 
 	static void traverse(LatexNode n, int level) {
-		System.out.println(makeIndentString(level) + " |" + beautify(n.getContent()) + "| - " + n.getType() + " parent=" + getParentName(n));
+		System.out.format("%s |%s| - %s parent=%s\n",
+				makeIndentString(level), beautify(n.getContent()), n.getType(), getParentName(n));
+		// System.out.println(makeIndentString(level) + " |" + beautify(n.getContent()) + "| - " + n.getType() + " parent=" + getParentName(n));
 		// System.out.println(makeIndentString(level) + " |" + n.getContent() + "| - " + n.getClass().getSimpleName());
 		// System.out.println(makeIndentString(level) + " |" + beautify(n.getContent()) + "| - " + n.getClass().getSimpleName());
 

@@ -4,11 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1533f2bc-7b2c-4398-acf4-6e78c7f05391" name="Changes" comment="" />
+    <list default="true" id="1533f2bc-7b2c-4398-acf4-6e78c7f05391" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/wilbur/StringInputTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wilbur/StringInputTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/wilbur/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/wilbur/Utils.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -28,6 +34,9 @@
       </MavenImportingSettings>
     </option>
   </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="2" />
+  </component>
   <component name="ProjectId" id="2KSRnRng3GiQF7WOQRvVtZzyiHe" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -44,7 +53,7 @@
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "D:/GITHUB/LATEX-LINTER/_JAVA/latex-dom/tex",
+    "last_opened_file_path": "C:/_GITHUB/latex-dom",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie"
   }
 }]]></component>
@@ -57,7 +66,7 @@
       <recent name="wilbur" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.FileInputTest">
+  <component name="RunManager" selected="Application.StringInputTest">
     <configuration name="FileInputTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="wilbur.FileInputTest" />
       <module name="latex-dom" />
@@ -86,8 +95,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.FileInputTest" />
         <item itemvalue="Application.StringInputTest" />
+        <item itemvalue="Application.FileInputTest" />
       </list>
     </recent_temporary>
   </component>

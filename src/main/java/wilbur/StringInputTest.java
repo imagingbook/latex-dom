@@ -20,7 +20,9 @@ public abstract class StringInputTest {
     // static String input = "a \\cmd {arg1}[arg2] in the text";
     // static String input = "a [bracket block] in the text";
     // static String input = "a comment%like this\n in the text";                                           // WRONG: there is no whitespace between 'this' and 'in'
-    static String input = "a word only and another $abra \\times 3$ \\footnote";
+    // static String input = "a word only and another $abra \\times 3$ \\footnote{foo}";
+    // static String input = "multiple\n\nnew lines";
+    static String input = "multiple \\textbf{new} lines";
     // static String input = " Plain text with escaped characters, such as \\%, \\$, \\#, \\_ and \\&.";   // special characters are treated as commands
     // static String input = "the line is broken \\\\*[6pt]before these words";                             // optional command not recognized
     // static String input = "this is \\begin{Stuff}[abra] an environment \\end{Stuff} and so";             // name of environment not available?
