@@ -1,6 +1,8 @@
 /*.aux
 /*.log
 /*.synctex
+/*.out
+/*.tcp
 /*.tps
 /*.pdf
 /*.bbl

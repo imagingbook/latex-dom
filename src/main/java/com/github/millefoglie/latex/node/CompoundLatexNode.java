@@ -53,7 +53,7 @@ public class CompoundLatexNode extends AbstractLatexNode {
                 return newChild;
             }
         } else {
-            LatexChildNode prev = (LatexChildNode) refChild.getPreviousSibling();
+            LatexChildNode prev = refChild.getPreviousSibling();
             prev.setNextSibling(newChild);
             newChild.setPreviousSibling(prev);
             newChild.setNextSibling(refChild);
